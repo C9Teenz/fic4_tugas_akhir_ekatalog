@@ -1,4 +1,3 @@
-
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,8 +18,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<SaveRegisterEvent>((event, emit) async {
       emit(RegisterLoading());
       final result = await datasource.register(event.request);
-      print(result);
-      emit(RegisterLoaded(model: result));
+      result.fold((error) {
+        emit(RegisterError(msg: error));
+      }, (r) {
+        emit(RegisterLoaded(model: r));
+      });
+      //fold disini seperti fungsi if
+      // emit(RegisterLoaded(model: result));
     });
   }
 }

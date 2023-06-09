@@ -1,4 +1,3 @@
-
 import 'package:fic4_flutter_auth_bloc/data/localsources/auth_local_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -16,14 +15,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     this.authDatasource,
   ) : super(LoginInitial()) {
     on<DoLoginEvent>((event, emit) async {
-      try {
-        emit(LoginLoading());
-        final result = await authDatasource.login(event.loginModel);
-        await AuthLocalStorage().saveToken(result.accessToken);
-        emit(LoginLoaded(loginResponseModel: result));
-      } catch (e) {
-        emit(LoginError(message: 'Network problem'));
-      }
+      // try {
+      //   emit(LoginLoading());
+      //   final result = await authDatasource.login(event.loginModel);
+      //   await AuthLocalStorage().saveToken(result.accessToken);
+      //   emit(LoginLoaded(loginResponseModel: result));
+      // } catch (e) {
+      //   emit(LoginError(message: 'Network problem'));
+      // }
+      emit(LoginLoading());
+      final result = await authDatasource.login(event.loginModel);
+
+      result.fold((error) {
+        emit(LoginError(message: error));
+      }, (r) {
+        AuthLocalStorage().saveToken(r.accessToken);
+        emit(LoginLoaded(loginResponseModel: r));
+      });
     });
   }
 }

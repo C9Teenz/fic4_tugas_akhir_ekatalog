@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
 import 'package:http/http.dart' as http;
@@ -72,6 +73,29 @@ class ProductDatasources {
     final result = List<ProductResponseModel>.from(jsonDecode(response.body)
         .map((x) => ProductResponseModel.fromMap(x))).toList();
 
+    return result;
+  }
+
+  Future<List<ProductResponseModel>> getProductPagination() async {
+    final response = await http.get(
+        Uri.parse(
+            'https://api.escuelajs.co/api/v1/products/?offset=0&limit=10'),
+        headers: {'Content-Type': 'application/json'});
+
+    final result = List<ProductResponseModel>.from(jsonDecode(response.body)
+        .map((x) => ProductResponseModel.fromMap(x))).toList();
+    return result;
+  }
+
+  Future<List<ProductResponseModel>> laodMoreProductPagination(
+      int page, int size) async {
+    final response = await http.get(
+        Uri.parse(
+            'https://api.escuelajs.co/api/v1/products/?offset=${page * size}&limit=$size'),
+        headers: {'Content-Type': 'application/json'});
+
+    final result = List<ProductResponseModel>.from(jsonDecode(response.body)
+        .map((x) => ProductResponseModel.fromMap(x))).toList();
     return result;
   }
 }

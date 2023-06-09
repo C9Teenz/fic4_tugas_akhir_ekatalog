@@ -33,9 +33,11 @@ class _LoginPageState extends State<LoginPage> {
   void isLogin() async {
     final isTokenExist = await AuthLocalStorage().isTokenExist();
     if (isTokenExist) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return const HomePage();
-      }));
+      if (context.mounted) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const HomePage();
+        }));
+      }
     }
   }
 
@@ -104,6 +106,13 @@ class _LoginPageState extends State<LoginPage> {
                           builder: (context) => const HomePage(),
                         ),
                         (route) => false);
+                  }
+                  if(state is LoginError){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text('Failed Login')),
+                    );
                   }
                 },
                 builder: (context, state) {
