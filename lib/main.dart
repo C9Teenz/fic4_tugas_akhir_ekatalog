@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
           create: (context) => LoginBloc(AuthDatasource()),
         ),
         BlocProvider(
-          create: (context) => ProfileBloc(AuthDatasource()),
+          create: (context) => ProfileBloc(),
         ),
         BlocProvider(
           create: (context) => CreateProductBloc(ProductDatasources()),

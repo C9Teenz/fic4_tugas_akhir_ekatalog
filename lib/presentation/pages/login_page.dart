@@ -1,6 +1,7 @@
+import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:http/http.dart' as http;
 import '../../bloc/login/login_bloc.dart';
 import '../../bloc/register/register_bloc.dart';
 import '../../data/localsources/auth_local_storage.dart';
@@ -25,18 +26,29 @@ class _LoginPageState extends State<LoginPage> {
     emailController = TextEditingController();
     passwordController = TextEditingController();
 
-    isLogin();
-    Future.delayed(const Duration(seconds: 2));
     super.initState();
+    isLogin();
   }
 
   void isLogin() async {
     final isTokenExist = await AuthLocalStorage().isTokenExist();
     if (isTokenExist) {
-      if (context.mounted) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return const HomePage();
-        }));
+      final token = await AuthLocalStorage().getToken();
+      var headers = {'Authorization': 'Bearer $token'};
+      final response = await http.get(
+        Uri.parse('https://api.escuelajs.co/api/v1/auth/profile'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+              (route) => false);
+        }
+      } else {
+        AuthLocalStorage().removeToken();
       }
     }
   }
@@ -107,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         (route) => false);
                   }
-                  if(state is LoginError){
+                  if (state is LoginError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                           backgroundColor: Colors.red,
@@ -116,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                   }
                 },
                 builder: (context, state) {
-                  if (state is RegisterLoading) {
+                  if (state is LoginLoading) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );

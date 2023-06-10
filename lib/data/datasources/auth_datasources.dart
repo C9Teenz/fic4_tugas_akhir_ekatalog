@@ -41,15 +41,29 @@ class AuthDatasource {
     }
   }
 
-  Future<ProfileResponseModel> getProfile() async {
+ static Future<ProfileResponseModel> getProfile() async {
     final token = await AuthLocalStorage().getToken();
     var headers = {'Authorization': 'Bearer $token'};
-    final response = await http.get(
+    // final response = await http.get(
+    //   Uri.parse('https://api.escuelajs.co/api/v1/auth/profile'),
+    //   headers: headers,
+    // );
+
+    // // final result = ProfileResponseModel.fromJson(response.body);
+    // if(response.statusCode==200){
+    //   return Right(ProfileResponseModel.fromJson(response.body));
+    // }else{
+    //   return const Left("Get Profile Failed");
+    // }
+    try {
+         final response = await http.get(
       Uri.parse('https://api.escuelajs.co/api/v1/auth/profile'),
       headers: headers,
     );
-
     final result = ProfileResponseModel.fromJson(response.body);
     return result;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

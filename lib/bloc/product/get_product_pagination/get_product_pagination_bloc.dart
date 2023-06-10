@@ -35,7 +35,7 @@ class GetProductPaginationBloc
         hasMore: response.length > state.size!,
         status: Status.loaded,
         page: state.page! + 1,
-        products: [...state.products!, ...response],
+        products: state.products! + response,
       ));
       print(state.products);
     });

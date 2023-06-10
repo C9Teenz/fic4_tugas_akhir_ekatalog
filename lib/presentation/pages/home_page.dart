@@ -6,6 +6,8 @@ import 'package:fic4_flutter_auth_bloc/bloc/profile/profile_bloc.dart';
 import 'package:fic4_flutter_auth_bloc/data/localsources/auth_local_storage.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/presentation/widgets/card_widget.dart';
+import 'package:fic4_flutter_auth_bloc/presentation/widgets/dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -291,36 +293,13 @@ class _HomePageState extends State<HomePage> {
                                                 state.product.price.toString();
                                             updateDescriptionController.text =
                                                 state.product.description!;
-                                            return Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          labelText: 'Title'),
-                                                  controller:
-                                                      updateTitleController,
-                                                ),
-                                                TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          labelText: 'Price'),
-                                                  controller:
-                                                      updatePriceController,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                ),
-                                                TextField(
-                                                  maxLines: 3,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          labelText:
-                                                              'Description'),
-                                                  controller:
-                                                      updateDescriptionController,
-                                                ),
-                                              ],
-                                            );
+                                            return DialogWidget(
+                                                titleController:
+                                                    updateTitleController,
+                                                priceController:
+                                                    updatePriceController,
+                                                descriptionController:
+                                                    updateDescriptionController);
                                           } else {
                                             return const Center(
                                               child:
@@ -406,15 +385,16 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 );
                               },
-                              child: Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                      child: Text('${product[index].price}')),
-                                  title: Text(product[index].title ?? '-'),
-                                  subtitle:
-                                      Text(product[index].description ?? '-'),
-                                ),
-                              ),
+                              // child: Card(
+                              //   child: ListTile(
+                              //     leading: CircleAvatar(
+                              //         child: Text('${product[index].price}')),
+                              //     title: Text(product[index].title ?? '-'),
+                              //     subtitle:
+                              //         Text(product[index].description ?? '-'),
+                              //   ),
+                              // ),
+                              child: CardWidget(data: product[index]),
                             );
                           }));
                     }
@@ -433,25 +413,10 @@ class _HomePageState extends State<HomePage> {
             builder: (context) {
               return AlertDialog(
                 title: const Text('Add Product'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Title'),
-                      controller: titleController,
-                    ),
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Price'),
-                      controller: priceController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextField(
-                      maxLines: 3,
-                      decoration:
-                          const InputDecoration(labelText: 'Description'),
-                      controller: descriptionController,
-                    ),
-                  ],
+                content: DialogWidget(
+                  titleController: titleController,
+                  priceController: priceController,
+                  descriptionController: descriptionController,
                 ),
                 actions: [
                   ElevatedButton(
