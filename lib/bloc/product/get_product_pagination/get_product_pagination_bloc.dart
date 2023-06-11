@@ -18,7 +18,7 @@ class GetProductPaginationBloc
     on<GetProductPaginationStarted>((event, emit) async {
       emit(state.copyWith(status: Status.loading));
       final response = await data.getProductPagination();
-      print(response[0].title);
+
       emit(state.copyWith(
           size: 10,
           hasMore: response.length > 10,
@@ -37,7 +37,6 @@ class GetProductPaginationBloc
         page: state.page! + 1,
         products: state.products! + response,
       ));
-      print(state.products);
     });
   }
 }

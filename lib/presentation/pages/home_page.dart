@@ -31,10 +31,10 @@ class _HomePageState extends State<HomePage> {
   TextEditingController updatePriceController = TextEditingController();
   final controller = ScrollController();
   List<ProductResponseModel> product = [];
+
   @override
   void initState() {
     context.read<ProfileBloc>().add(GetProfileEvent());
-    // context.read<GetAllProductBloc>().add(DoGetAllProductEvent());
 
     controller.addListener(() {
       if (controller.position.maxScrollExtent == controller.offset) {
@@ -62,9 +62,6 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => const LoginPage(),
                         ),
                         (route) => false));
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return const LoginPage();
-                // }));
               },
               icon: const Icon(Icons.logout_outlined))
         ],
@@ -92,159 +89,10 @@ class _HomePageState extends State<HomePage> {
 
             return const Text('no data');
           }),
-          // Expanded(
-          //   child: BlocBuilder<GetAllProductBloc, GetAllProductState>(
-          //     builder: (context, state) {
-          //       if (state is GetAllProductLoading) {
-          //         return const Center(
-          //           child: CircularProgressIndicator(),
-          //         );
-          //       }
-          //       if (state is GetALlProductLoaded) {
-          //         return ListView.builder(
-          //             padding: const EdgeInsets.symmetric(horizontal: 16),
-          //             itemCount: state.listProduct.length,
-          //             itemBuilder: ((context, index) {
-          //               final product =
-          //                   state.listProduct.reversed.toList()[index];
-          //               return GestureDetector(
-          //                 onTap: () {
-          //                   context
-          //                       .read<GetOneProductBloc>()
-          //                       .add(DoGetOneProductEvent(id: product.id!));
-          //                   showDialog(
-          //                     context: context,
-          //                     builder: (context) {
-          //                       return AlertDialog(
-          //                         title: const Text('Edit Product'),
-          //                         content: BlocBuilder<GetOneProductBloc,
-          //                             GetOneProductState>(
-          //                           builder: (context, state) {
-          //                             if (state is GetOneProductLoaded) {
-          //                               updateTitleController.text =
-          //                                   state.product.title!;
-          //                               updatePriceController.text =
-          //                                   state.product.price.toString();
-          //                               updateDescriptionController.text =
-          //                                   state.product.description!;
-          //                               return Column(
-          //                                 mainAxisSize: MainAxisSize.min,
-          //                                 children: [
-          //                                   TextField(
-          //                                     decoration: const InputDecoration(
-          //                                         labelText: 'Title'),
-          //                                     controller: updateTitleController,
-          //                                   ),
-          //                                   TextField(
-          //                                     decoration: const InputDecoration(
-          //                                         labelText: 'Price'),
-          //                                     controller: updatePriceController,
-          //                                     keyboardType:
-          //                                         TextInputType.number,
-          //                                   ),
-          //                                   TextField(
-          //                                     maxLines: 3,
-          //                                     decoration: const InputDecoration(
-          //                                         labelText: 'Description'),
-          //                                     controller:
-          //                                         updateDescriptionController,
-          //                                   ),
-          //                                 ],
-          //                               );
-          //                             } else {
-          //                               return const Center(
-          //                                 child: CircularProgressIndicator(),
-          //                               );
-          //                             }
-          //                           },
-          //                         ),
-          //                         actions: [
-          //                           ElevatedButton(
-          //                             onPressed: () {
-          //                               Navigator.pop(context);
-          //                             },
-          //                             child: const Text('Cancel'),
-          //                           ),
-          //                           const SizedBox(
-          //                             width: 4,
-          //                           ),
-          //                           BlocListener<EditProductBloc,
-          //                               EditProductState>(
-          //                             listener: (context, state) {
-          //                               if (state is EditProductLoaded) {
-          //                                 updateTitleController.clear();
-          //                                 updatePriceController.clear();
-          //                                 updateDescriptionController.clear();
-          //                                 ScaffoldMessenger.of(context)
-          //                                     .showSnackBar(const SnackBar(
-          //                                         content: Text('xxx')));
-          //                                 Navigator.pop(context);
-          //                                 context
-          //                                     .read<GetAllProductBloc>()
-          //                                     .add(DoGetAllProductEvent());
-          //                               }
-          //                             },
-          //                             child: BlocBuilder<EditProductBloc,
-          //                                 EditProductState>(
-          //                               builder: (context, state) {
-          //                                 if (state is EditProductLoading) {
-          //                                   return const Center(
-          //                                     child:
-          //                                         CircularProgressIndicator(),
-          //                                   );
-          //                                 }
-          //                                 return ElevatedButton(
-          //                                   onPressed: () {
-          //                                     final productModel =
-          //                                         ProductModelUpdate(
-          //                                       title:
-          //                                           updateTitleController.text,
-          //                                       price: int.parse(
-          //                                           updatePriceController.text),
-          //                                       description:
-          //                                           updateDescriptionController
-          //                                               .text,
-          //                                     );
-
-          //                                     context
-          //                                         .read<EditProductBloc>()
-          //                                         .add(DoUpdateProductEvent(
-          //                                             productModel:
-          //                                                 productModel,
-          //                                             id: product.id!));
-
-          //                                     // context
-          //                                     //     .read<GetAllProductBloc>()
-          //                                     //     .add(DoGetAllProductEvent());
-          //                                   },
-          //                                   child: const Text('Save'),
-          //                                 );
-          //                               },
-          //                             ),
-          //                           ),
-          //                         ],
-          //                       );
-          //                     },
-          //                   );
-          //                 },
-          //                 child: Card(
-          //                   child: ListTile(
-          //                     leading:
-          //                         CircleAvatar(child: Text('${product.price}')),
-          //                     title: Text(product.title ?? '-'),
-          //                     subtitle: Text(product.description ?? '-'),
-          //                   ),
-          //                 ),
-          //               );
-          //             }));
-          //       }
-          //       return const Text('no data');
-          //     },
-          //   ),
-          // ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
+                product = [];
                 context
                     .read<GetProductPaginationBloc>()
                     .add(GetProductPaginationStarted());
@@ -268,137 +116,13 @@ class _HomePageState extends State<HomePage> {
                     if (state.status == Status.loaded) {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       product = state.products!;
-                      return ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          controller: controller,
-                          itemCount: product.length,
-                          itemBuilder: ((context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                context.read<GetOneProductBloc>().add(
-                                    DoGetOneProductEvent(
-                                        id: product[index].id!));
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Edit Product'),
-                                      content: BlocBuilder<GetOneProductBloc,
-                                          GetOneProductState>(
-                                        builder: (context, state) {
-                                          if (state is GetOneProductLoaded) {
-                                            updateTitleController.text =
-                                                state.product.title!;
-                                            updatePriceController.text =
-                                                state.product.price.toString();
-                                            updateDescriptionController.text =
-                                                state.product.description!;
-                                            return DialogWidget(
-                                                titleController:
-                                                    updateTitleController,
-                                                priceController:
-                                                    updatePriceController,
-                                                descriptionController:
-                                                    updateDescriptionController);
-                                          } else {
-                                            return const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                      actions: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Cancel'),
-                                        ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        BlocListener<EditProductBloc,
-                                            EditProductState>(
-                                          listener: (context, state) {
-                                            if (state is EditProductLoaded) {
-                                              updateTitleController.clear();
-                                              updatePriceController.clear();
-                                              updateDescriptionController
-                                                  .clear();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                      content: Text('xxx')));
-                                              Navigator.pop(context);
-                                              // context
-                                              //     .read<GetAllProductBloc>()
-                                              //     .add(DoGetAllProductEvent());
-                                              context
-                                                  .read<
-                                                      GetProductPaginationBloc>()
-                                                  .add(
-                                                      GetProductPaginationStarted());
-                                            }
-                                          },
-                                          child: BlocBuilder<EditProductBloc,
-                                              EditProductState>(
-                                            builder: (context, state) {
-                                              if (state is EditProductLoading) {
-                                                return const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                              }
-                                              return ElevatedButton(
-                                                onPressed: () {
-                                                  final productModel =
-                                                      ProductModelUpdate(
-                                                    title: updateTitleController
-                                                        .text,
-                                                    price: int.parse(
-                                                        updatePriceController
-                                                            .text),
-                                                    description:
-                                                        updateDescriptionController
-                                                            .text,
-                                                  );
-
-                                                  context
-                                                      .read<EditProductBloc>()
-                                                      .add(DoUpdateProductEvent(
-                                                          productModel:
-                                                              productModel,
-                                                          id: product[index]
-                                                              .id!));
-
-                                                  // context
-                                                  //     .read<GetAllProductBloc>()
-                                                  //     .add(DoGetAllProductEvent());
-                                                },
-                                                child: const Text('Save'),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              // child: Card(
-                              //   child: ListTile(
-                              //     leading: CircleAvatar(
-                              //         child: Text('${product[index].price}')),
-                              //     title: Text(product[index].title ?? '-'),
-                              //     subtitle:
-                              //         Text(product[index].description ?? '-'),
-                              //   ),
-                              // ),
-                              child: CardWidget(data: product[index]),
-                            );
-                          }));
+                      return listCard();
                     }
-                    return const Text('no data');
+                    if (product.isEmpty) {
+                      return const Center(child: Text('no data'));
+                    } else {
+                      return listCard();
+                    }
                   },
                 ),
               ),
@@ -456,10 +180,6 @@ class _HomePageState extends State<HomePage> {
                             context.read<CreateProductBloc>().add(
                                 DoCreateProductEvent(
                                     productModel: productModel));
-
-                            // context
-                            //     .read<GetAllProductBloc>()
-                            //     .add(DoGetAllProductEvent());
                           },
                           child: const Text('Save'),
                         );
@@ -474,5 +194,103 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  ListView listCard() {
+    return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        controller: controller,
+        itemCount: product.length,
+        itemBuilder: ((context, index) {
+          return GestureDetector(
+            onTap: () {
+              context
+                  .read<GetOneProductBloc>()
+                  .add(DoGetOneProductEvent(id: product[index].id!));
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Edit Product'),
+                    content: BlocBuilder<GetOneProductBloc, GetOneProductState>(
+                      builder: (context, state) {
+                        if (state is GetOneProductLoaded) {
+                          updateTitleController.text = state.product.title!;
+                          updatePriceController.text =
+                              state.product.price.toString();
+                          updateDescriptionController.text =
+                              state.product.description!;
+                          return DialogWidget(
+                              titleController: updateTitleController,
+                              priceController: updatePriceController,
+                              descriptionController:
+                                  updateDescriptionController);
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      BlocListener<EditProductBloc, EditProductState>(
+                        listener: (context, state) {
+                          if (state is EditProductLoaded) {
+                            updateTitleController.clear();
+                            updatePriceController.clear();
+                            updateDescriptionController.clear();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('xxx')));
+                            Navigator.pop(context);
+                            // context
+                            //     .read<GetAllProductBloc>()
+                            //     .add(DoGetAllProductEvent());
+                            context
+                                .read<GetProductPaginationBloc>()
+                                .add(GetProductPaginationStarted());
+                          }
+                        },
+                        child: BlocBuilder<EditProductBloc, EditProductState>(
+                          builder: (context, state) {
+                            if (state is EditProductLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            return ElevatedButton(
+                              onPressed: () {
+                                final productModel = ProductModelUpdate(
+                                  title: updateTitleController.text,
+                                  price: int.parse(updatePriceController.text),
+                                  description: updateDescriptionController.text,
+                                );
+
+                                context.read<EditProductBloc>().add(
+                                    DoUpdateProductEvent(
+                                        productModel: productModel,
+                                        id: product[index].id!));
+                              },
+                              child: const Text('Save'),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: CardWidget(data: product[index]),
+          );
+        }));
   }
 }

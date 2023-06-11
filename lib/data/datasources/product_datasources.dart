@@ -12,7 +12,7 @@ class ProductDatasources {
   final dio = Dio();
   Future<ProductResponseModel> createProduct(ProductModel model) async {
     // try {
-    final newMap = model.toMap();
+ 
     var headers = {'Content-Type': 'application/json'};
 
     final response = await http.post(
