@@ -5,9 +5,11 @@ import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_mod
 
 class CardWidget extends StatelessWidget {
   final ProductResponseModel data;
+  final void Function() onClick;
   const CardWidget({
     Key? key,
     required this.data,
+    required this.onClick,
   }) : super(key: key);
 
   @override
@@ -53,6 +55,11 @@ class CardWidget extends StatelessWidget {
               ],
             ),
           ),
+          Expanded(
+              child: Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      onPressed: onClick, icon: const Icon(Icons.edit))))
         ],
       ),
     );

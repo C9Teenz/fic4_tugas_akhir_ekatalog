@@ -10,9 +10,10 @@ import '../models/request/product_model_update.dart';
 
 class ProductDatasources {
   final dio = Dio();
-  Future<ProductResponseModel> createProduct(ProductModel model) async {
+  Future<Either<String, ProductResponseModel>> createProduct(
+      ProductModel model) async {
     // try {
- 
+
     var headers = {'Content-Type': 'application/json'};
 
     final response = await http.post(
@@ -20,8 +21,12 @@ class ProductDatasources {
       headers: headers,
       body: model.toJson(),
     );
+    if (response.statusCode == 201) {
+      return right(ProductResponseModel.fromJson(response.body));
+    } else {
+      return left('Failed to create product.');
+    }
 
-    return ProductResponseModel.fromJson(response.body);
     // } catch (e) {
 
     // }
@@ -40,62 +45,72 @@ class ProductDatasources {
   //     throw Exception('Failed to update product.');
   //   }
   // }
-  Future<ProductResponseModel> updateProduct(
+  Future<Either<String, ProductResponseModel>> updateProduct(
       ProductModelUpdate model, int id) async {
-    // final datas = ProductModel.fromMap({
-    //   "title": model.title,
-    //   "price": model.price,
-    //   "description": model.description
-    // });
     final response = await dio.put(
         'https://api.escuelajs.co/api/v1/products/$id',
         data: model.toMap());
+
     if (response.statusCode == 200) {
-      return ProductResponseModel.fromMap(response.data);
+      return right(ProductResponseModel.fromMap(response.data));
     } else {
-      throw Exception('Failed to update product.');
+      return left('Failed to update product.');
     }
   }
 
-  Future<ProductResponseModel> getProductById(int id) async {
+  Future<Either<String, ProductResponseModel>> getProductById(int id) async {
     final response = await http.get(
       Uri.parse('https://api.escuelajs.co/api/v1/products/$id'),
     );
-
-    return ProductResponseModel.fromJson(response.body);
+    if (response.statusCode == 200) {
+      return right(ProductResponseModel.fromJson(response.body));
+    } else {
+      return left('Failed to get product.');
+    }
   }
 
-  Future<List<ProductResponseModel>> getAllProduct() async {
+  Future<Either<String, List<ProductResponseModel>>> getAllProduct() async {
     final response = await http.get(
       Uri.parse('https://api.escuelajs.co/api/v1/products'),
     );
-
-    final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-        .map((x) => ProductResponseModel.fromMap(x))).toList();
-
-    return result;
+    if (response.statusCode == 200) {
+      final result = List<ProductResponseModel>.from(jsonDecode(response.body)
+          .map((x) => ProductResponseModel.fromMap(x))).toList();
+      return right(result);
+    } else {
+      return left('Failed to get product.');
+    }
   }
 
-  Future<List<ProductResponseModel>> getProductPagination() async {
+  Future<Either<String, List<ProductResponseModel>>>
+      getProductPagination() async {
     final response = await http.get(
         Uri.parse(
             'https://api.escuelajs.co/api/v1/products/?offset=0&limit=10'),
         headers: {'Content-Type': 'application/json'});
-
-    final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-        .map((x) => ProductResponseModel.fromMap(x))).toList();
-    return result;
+    if (response.statusCode == 200) {
+      final result = List<ProductResponseModel>.from(jsonDecode(response.body)
+          .map((x) => ProductResponseModel.fromMap(x))).toList();
+      return right(result);
+    } else {
+      return left('Failed to get product.');
+    }
   }
 
-  Future<List<ProductResponseModel>> laodMoreProductPagination(
+  Future<Either<String, List<ProductResponseModel>>> laodMoreProductPagination(
       int page, int size) async {
     final response = await http.get(
         Uri.parse(
             'https://api.escuelajs.co/api/v1/products/?offset=${page * size}&limit=$size'),
         headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final result = List<ProductResponseModel>.from(jsonDecode(response.body)
+          .map((x) => ProductResponseModel.fromMap(x))).toList();
+      return right(result);
+    } else {
+      return left('Failed to get product.');
+    }
 
-    final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-        .map((x) => ProductResponseModel.fromMap(x))).toList();
-    return result;
+ 
   }
 }

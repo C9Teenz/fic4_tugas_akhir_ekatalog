@@ -16,13 +16,15 @@ class GetOneProductBloc extends Bloc<GetOneProductEvent, GetOneProductState> {
   ) : super(GetOneProductInitial()) {
     on<DoGetOneProductEvent>((event, emit) async{
       emit(GetOneProductLoading());
-      try {
+ 
         final result= await data.getProductById(event.id);
+        result.fold(
+          (l) => emit(GetOneProductError(msg: l)),
+          (r) => emit(GetOneProductLoaded(product: r)),
+        );
 
-        emit(GetOneProductLoaded(product: result));
-      } catch (e) {
-        emit(GetOneProductFailed());
-      }
+       
+   
     });
   }
 }

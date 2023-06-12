@@ -1,4 +1,3 @@
-
 import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -17,7 +16,11 @@ class CreateProductBloc extends Bloc<CreateProductEvent, CreateProductState> {
     on<DoCreateProductEvent>((event, emit) async {
       emit(CreateProductLoading());
       final result = await productDatasources.createProduct(event.productModel);
-      emit(CreateProductLoaded(productResponseModel: result));
+      // emit(CreateProductLoaded(productResponseModel: result));
+      result.fold(
+        (l) => emit(CreateProductError(msg: l)),
+        (r) => emit(CreateProductLoaded(productResponseModel: r)),
+      );
     });
   }
 }

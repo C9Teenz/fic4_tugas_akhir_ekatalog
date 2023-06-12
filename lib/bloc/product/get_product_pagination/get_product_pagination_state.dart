@@ -8,6 +8,12 @@ enum Status { initial, loading, loaded, error }
 class GetProductPaginationInitial extends GetProductPaginationState {}
 
 class GetProductPaginationLoading extends GetProductPaginationState {}
+class GetProductPaginationError extends GetProductPaginationState {
+  final String msg;
+  GetProductPaginationError({
+    required this.msg,
+  });
+}
 
 class GetProductPaginationLoaded extends GetProductPaginationState {
   Status? status;

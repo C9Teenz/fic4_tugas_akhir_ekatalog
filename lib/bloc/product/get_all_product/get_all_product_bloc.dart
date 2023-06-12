@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -16,7 +15,10 @@ class GetAllProductBloc extends Bloc<GetAllProductEvent, GetAllProductState> {
     on<DoGetAllProductEvent>((event, emit) async {
       emit(GetAllProductLoading());
       final result = await productDatasources.getAllProduct();
-      emit(GetALlProductLoaded(listProduct: result));
+      result.fold(
+        (l) => emit(GetAllProductError(msg: l)),
+        (r) => emit(GetALlProductLoaded(listProduct: r)),
+      );
     });
   }
 }

@@ -18,25 +18,27 @@ class GetProductPaginationBloc
     on<GetProductPaginationStarted>((event, emit) async {
       emit(state.copyWith(status: Status.loading));
       final response = await data.getProductPagination();
-
-      emit(state.copyWith(
-          size: 10,
-          hasMore: response.length > 10,
-          page: 1,
-          products: response,
-          status: Status.loaded));
+      response.fold(
+          (l) => GetProductPaginationError(msg: l),
+          (r) => emit(GetProductPaginationLoaded(
+                products: r,
+                hasMore: r.length > state.size!,
+                status: Status.loaded,
+                page: 1,
+              )));
     });
     on<GetProductPaginationLoadMore>((event, emit) async {
       emit(state.copyWith(status: Status.loading));
       final response =
           await data.laodMoreProductPagination(state.page!, state.size!);
-
-      emit(state.copyWith(
-        hasMore: response.length > state.size!,
-        status: Status.loaded,
-        page: state.page! + 1,
-        products: state.products! + response,
-      ));
+      response.fold(
+          (l) => GetProductPaginationError(msg: l),
+          (r) => emit(state.copyWith(
+                hasMore: r.length > state.size!,
+                status: Status.loaded,
+                page: state.page! + 1,
+                products: state.products! + r,
+              )));
     });
   }
 }
