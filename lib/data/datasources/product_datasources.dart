@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 

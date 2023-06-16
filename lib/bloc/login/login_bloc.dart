@@ -4,7 +4,9 @@ import 'package:meta/meta.dart';
 
 import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/login_model.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/login_response_model.dart';
+
+import '../../data/models/response/login/login_response_model.dart';
+
 
 part 'login_event.dart';
 part 'login_state.dart';

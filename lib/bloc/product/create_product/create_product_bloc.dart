@@ -1,4 +1,4 @@
-import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 

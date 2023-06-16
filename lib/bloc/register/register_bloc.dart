@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/register_model.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/register_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/register/register_response_model.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';

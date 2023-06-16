@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 
 import 'package:fic4_flutter_auth_bloc/data/datasources/product_datasources.dart';
 
-import '../../../data/models/response/product_response_model.dart';
+import '../../../data/models/response/product/product_response_model.dart';
 
 part 'get_one_product_event.dart';
 part 'get_one_product_state.dart';

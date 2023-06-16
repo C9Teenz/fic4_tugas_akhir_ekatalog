@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../data/models/request/product_model_update.dart';
-import '../../../data/models/response/product_response_model.dart';
+import '../../../data/models/response/product/product_response_model.dart';
 
 part 'edit_product_event.dart';
 part 'edit_product_state.dart';

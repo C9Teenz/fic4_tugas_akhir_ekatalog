@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
 import 'package:intl/intl.dart';
 
 class DetailProductPage extends StatelessWidget {

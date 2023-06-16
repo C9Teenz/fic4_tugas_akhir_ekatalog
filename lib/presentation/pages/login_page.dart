@@ -1,8 +1,9 @@
+import 'package:fic4_flutter_auth_bloc/cubit/login/login_cubit.dart';
 import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import '../../bloc/login/login_bloc.dart';
+
 import '../../bloc/register/register_bloc.dart';
 import '../../data/localsources/auth_local_storage.dart';
 import '../../data/models/request/login_model.dart';
@@ -98,54 +99,87 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 16,
               ),
-              BlocConsumer<LoginBloc, LoginState>(
+              //bloc
+              // BlocConsumer<LoginBloc, LoginState>
+              BlocConsumer<LoginCubit, LoginState>(
                 listener: (context, state) {
-                  if (state is LoginLoaded) {
-                    emailController!.clear();
-                    passwordController!.clear();
-                    //navigasi
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          backgroundColor: Colors.blue,
-                          content: Text('Success Login')),
-                    );
+                  //   if (state is LoginLoaded) {
+                  //     emailController!.clear();
+                  //     passwordController!.clear();
+                  //     //navigasi
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //           backgroundColor: Colors.blue,
+                  //           content: Text('Success Login')),
+                  //     );
 
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    //   return const HomePage();
-                    // }));
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                        (route) => false);
-                  }
-                  if (state is LoginError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text('Failed Login')),
-                    );
-                  }
+                  //     // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //     //   return const HomePage();
+                  //     // }));
+                  //     Navigator.of(context).pushAndRemoveUntil(
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const HomePage(),
+                  //         ),
+                  //         (route) => false);
+                  //   }
+                  //   if (state is LoginError) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(
+                  //           backgroundColor: Colors.red,
+                  //           content: Text('Failed Login')),
+                  //     );
+                  //   }
+                  state.maybeWhen(
+                    orElse: () {},
+                    loaded: (data) {
+                      emailController!.clear();
+                      passwordController!.clear();
+                      //navigasi
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            backgroundColor: Colors.blue,
+                            content: Text('Success Login')),
+                      );
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                          (route) => false);
+                    },
+                    error: (message) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text(message)),
+                      );
+                    },
+                  );
                 },
                 builder: (context, state) {
-                  if (state is LoginLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return ElevatedButton(
-                    onPressed: () {
-                      final requestModel = LoginModel(
-                        email: emailController!.text,
-                        password: passwordController!.text,
+                  return state.maybeWhen(
+                    orElse: () {
+                      return ElevatedButton(
+                        onPressed: () {
+                          final requestModel = LoginModel(
+                            email: emailController!.text,
+                            password: passwordController!.text,
+                          );
+                          if (_formKey.currentState!.validate()) {
+                            //bloc
+                            // context
+                            //     .read<LoginBloc>()
+                            //     .add(DoLoginEvent(loginModel: requestModel));
+                            //Cubit
+                            context.read<LoginCubit>().login(requestModel);
+                          }
+                        },
+                        child: const Text('Login'),
                       );
-                      if (_formKey.currentState!.validate()) {
-                        context
-                            .read<LoginBloc>()
-                            .add(DoLoginEvent(loginModel: requestModel));
-                      }
                     },
-                    child: const Text('Login'),
+                    loading: () {
+                      return const Center(child: CircularProgressIndicator());
+                    },
                   );
                 },
               ),

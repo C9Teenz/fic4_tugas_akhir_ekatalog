@@ -1,4 +1,4 @@
-import 'package:fic4_flutter_auth_bloc/bloc/register/register_bloc.dart';
+import 'package:fic4_flutter_auth_bloc/cubit/register/register_cubit.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/register_model.dart';
 import 'package:fic4_flutter_auth_bloc/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -80,46 +80,73 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 16,
               ),
-              BlocConsumer<RegisterBloc, RegisterState>(
+              BlocConsumer<RegisterCubit, RegisterState>(
                 listener: (context, state) {
-                  if (state is RegisterLoaded) {
-                    nameController!.clear();
-                    emailController!.clear();
-                    passwordController!.clear();
-                    //navigasi
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          backgroundColor: Colors.blue,
-                          content: Text(
-                              'success register with id: ${state.model.id}')),
-                    );
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const LoginPage();
-                    }));
-                  }
+                  // if (state is RegisterLoaded) {
+                  //   nameController!.clear();
+                  //   emailController!.clear();
+                  //   passwordController!.clear();
+                  //   //navigasi
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(
+                  //         backgroundColor: Colors.blue,
+                  //         content: Text(
+                  //             'success register with id: ${state.model.id}')),
+                  //   );
+                  //   Navigator.push(context,
+                  //       MaterialPageRoute(builder: (context) {
+                  //     return const LoginPage();
+                  //   }));
+                  // }
+                  state.maybeWhen(
+                      orElse: () {},
+                      loaded: (model) {
+                        nameController!.clear();
+                        emailController!.clear();
+                        passwordController!.clear();
+                        //navigasi
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              backgroundColor: Colors.blue,
+                              content: Text(
+                                  'success register with id: ${model.id}')),
+                        );
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const LoginPage();
+                        }));
+                      },
+                      error: (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              backgroundColor: Colors.red,
+                              content:
+                                  Text('error register with message: $error')),
+                        );
+                      });
                 },
                 builder: (context, state) {
-                  if (state is RegisterLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return ElevatedButton(
-                    onPressed: () {
-                      final requestModel = RegisterModel(
-                        name: nameController!.text,
-                        email: emailController!.text,
-                        password: passwordController!.text,
-                      );
+                  return state.maybeWhen(
+                    orElse: () {
+                      return ElevatedButton(
+                        onPressed: () {
+                          final requestModel = RegisterModel(
+                            name: nameController!.text,
+                            email: emailController!.text,
+                            password: passwordController!.text,
+                          );
 
-                      if (_formKey.currentState!.validate()) {
-                        context
-                            .read<RegisterBloc>()
-                            .add(SaveRegisterEvent(request: requestModel));
-                      }
+                          if (_formKey.currentState!.validate()) {
+                            context
+                                .read<RegisterCubit>()
+                                .register(requestModel);
+                          }
+                        },
+                        child: const Text('Register'),
+                      );
                     },
-                    child: const Text('Register'),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                   );
                 },
               ),

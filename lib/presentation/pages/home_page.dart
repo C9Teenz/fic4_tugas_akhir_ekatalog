@@ -5,7 +5,7 @@ import 'package:fic4_flutter_auth_bloc/bloc/product/get_product_pagination/get_p
 import 'package:fic4_flutter_auth_bloc/bloc/profile/profile_bloc.dart';
 import 'package:fic4_flutter_auth_bloc/data/localsources/auth_local_storage.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/product_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
 import 'package:fic4_flutter_auth_bloc/presentation/pages/detail_product_page.dart';
 import 'package:fic4_flutter_auth_bloc/presentation/widgets/card_widget.dart';
 import 'package:fic4_flutter_auth_bloc/presentation/widgets/dialog_widget.dart';

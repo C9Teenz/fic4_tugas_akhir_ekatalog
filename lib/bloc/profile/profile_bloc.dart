@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
 import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/profile_response_model.dart';
+import 'package:fic4_flutter_auth_bloc/data/models/response/profile/profile_response_model.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
