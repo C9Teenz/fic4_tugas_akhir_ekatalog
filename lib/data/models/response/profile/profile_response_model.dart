@@ -1,59 +1,30 @@
 // To parse this JSON data, do
 //
-//     final profileResponseModel = profileResponseModelFromMap(jsonString);
+//     final profileResponseModel = profileResponseModelFromJson(jsonString);
 
+import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
-class ProfileResponseModel {
-  int? id;
-  String? email;
-  String? password;
-  String? name;
-  String? role;
-  String? avatar;
-  DateTime? creationAt;
-  DateTime? updatedAt;
+part 'profile_response_model.freezed.dart';
+part 'profile_response_model.g.dart';
 
-  ProfileResponseModel({
-    this.id,
-    this.email,
-    this.password,
-    this.name,
-    this.role,
-    this.avatar,
-    this.creationAt,
-    this.updatedAt,
-  });
+ProfileResponseModel profileResponseModelFromJson(String str) => ProfileResponseModel.fromJson(json.decode(str));
 
-  factory ProfileResponseModel.fromJson(String str) =>
-      ProfileResponseModel.fromMap(json.decode(str));
+String profileResponseModelToJson(ProfileResponseModel data) => json.encode(data.toJson());
 
-  String toJson() => json.encode(toMap());
+@freezed
+class ProfileResponseModel with _$ProfileResponseModel {
+    const factory ProfileResponseModel({
+        required int id,
+        required String email,
+        required String password,
+        required String name,
+        required String role,
+        required String avatar,
+        required DateTime creationAt,
+        required DateTime updatedAt,
+    }) = _ProfileResponseModel;
 
-  factory ProfileResponseModel.fromMap(Map<String, dynamic> json) =>
-      ProfileResponseModel(
-        id: json["id"],
-        email: json["email"],
-        password: json["password"],
-        name: json["name"],
-        role: json["role"],
-        avatar: json["avatar"],
-        creationAt: json["creationAt"] == null
-            ? null
-            : DateTime.parse(json["creationAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "email": email,
-        "password": password,
-        "name": name,
-        "role": role,
-        "avatar": avatar,
-        "creationAt": creationAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-      };
+    factory ProfileResponseModel.fromJson(Map<String, dynamic> json) => _$ProfileResponseModelFromJson(json);
 }

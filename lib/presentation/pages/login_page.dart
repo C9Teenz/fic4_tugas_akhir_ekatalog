@@ -1,10 +1,8 @@
-import 'package:fic4_flutter_auth_bloc/cubit/login/login_cubit.dart';
-import 'package:fic4_flutter_auth_bloc/data/datasources/auth_datasources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-import '../../bloc/register/register_bloc.dart';
+import '../../cubit/login/login_cubit.dart';
 import '../../data/localsources/auth_local_storage.dart';
 import '../../data/models/request/login_model.dart';
 import 'home_page.dart';

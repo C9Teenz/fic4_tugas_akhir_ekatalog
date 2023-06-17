@@ -1,14 +1,16 @@
-import 'package:fic4_flutter_auth_bloc/bloc/product/create_product/create_product_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/bloc/product/get_all_product/get_all_product_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/bloc/product/get_one_product/get_one_product_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/bloc/product/get_product_pagination/get_product_pagination_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/bloc/profile/profile_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/data/localsources/auth_local_storage.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
-import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
-import 'package:fic4_flutter_auth_bloc/presentation/pages/detail_product_page.dart';
-import 'package:fic4_flutter_auth_bloc/presentation/widgets/card_widget.dart';
-import 'package:fic4_flutter_auth_bloc/presentation/widgets/dialog_widget.dart';
+import '../../bloc/product/create_product/create_product_bloc.dart';
+
+import '../../bloc/product/get_one_product/get_one_product_bloc.dart';
+
+import '../../cubit/product/products_pagination/products_pagination_cubit.dart';
+import '../../cubit/profile/profile_cubit.dart';
+
+import '../../data/localsources/auth_local_storage.dart';
+import '../../data/models/request/product_model.dart';
+import '../../data/models/response/product/product_response_model.dart';
+import 'detail_product_page.dart';
+import '../widgets/card_widget.dart';
+import '../widgets/dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,16 +34,24 @@ class _HomePageState extends State<HomePage> {
   TextEditingController updatePriceController = TextEditingController();
   final controller = ScrollController();
   List<ProductResponseModel> product = [];
+  int newOffset = 0;
+  int newLimit = 10;
+  bool newIsNext = true;
 
   @override
   void initState() {
-    context.read<ProfileBloc>().add(GetProfileEvent());
-
+    context.read<ProfileCubit>().getProfile();
+    context.read<ProductsPaginationCubit>().getProduct();
     controller.addListener(() {
       if (controller.position.maxScrollExtent == controller.offset) {
-        context
-            .read<GetProductPaginationBloc>()
-            .add(GetProductPaginationLoadMore());
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(SnackBar(content: Text("mentok bro")));
+        print("mentok");
+        context.read<ProductsPaginationCubit>().nextProduct(
+            offset: newOffset,
+            isNext: newIsNext,
+            limit: newLimit,
+            products: product);
       }
     });
 
@@ -69,63 +79,125 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-            if (state is ProfileLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
+          BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const Center(
+                    child: Text("No Data"),
+                  );
+                },
+                loaded: (model) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(model.name),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Text(model.email),
+                    ],
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                error: (message) => Center(
+                  child: Text(message),
+                ),
               );
-            }
-            if (state is ProfileLoaded) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.profile.name ?? ''),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(state.profile.email ?? ''),
-                ],
-              );
-            }
-
-            return const Text('no data');
-          }),
+              // if (state is ProfileLoading) {
+              //   return const Center(
+              //     child: CircularProgressIndicator(),
+              //   );
+              // }
+              // if (state is ProfileLoaded) {
+              //   return Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Text(state.profile.name ?? ''),
+              //       const SizedBox(
+              //         width: 8,
+              //       ),
+              //       Text(state.profile.email ?? ''),
+              //     ],
+              //   );
+              // }
+            },
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
                 product = [];
-                context
-                    .read<GetProductPaginationBloc>()
-                    .add(GetProductPaginationStarted());
+                context.read<ProductsPaginationCubit>().getProduct();
               },
-              child: BlocListener<GetProductPaginationBloc,
-                  GetProductPaginationLoaded>(
-                listener: (context, state) {
-                  if (state.status == Status.loading) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Loading More...')));
-                  }
-                },
-                child: BlocBuilder<GetProductPaginationBloc,
-                    GetProductPaginationLoaded>(
-                  builder: (context, state) {
-                    if (state.status == Status.initial) {
+              child:
+                  BlocBuilder<ProductsPaginationCubit, ProductsPaginationState>(
+                builder: (context, state) {
+                  // if (state.status == Status.initial) {
+                  //   return const Center(
+                  //     child: CircularProgressIndicator(),
+                  //   );
+                  // }
+                  // if (state.status == Status.loaded) {
+                  //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  //   product = state.products!;
+                  //   return listCard();
+                  // }
+                  // if (product.isEmpty) {
+                  //   return const Center(child: Text('no data'));
+                  // } else {
+                  //   return listCard();
+                  // }
+                  return state.maybeWhen(
+                    orElse: () {
+                      return const Center(
+                        child: Text("No Data"),
+                      );
+                    },
+                    loaded: (products, offset, limit, isNext) {
+                      product = products;
+                      newOffset = offset!;
+                      newLimit = limit!;
+                      newIsNext = isNext!;
+
+                      return ListView.builder(
+                        controller: controller,
+                        itemBuilder: (context, index) {
+                          if (isNext && index == products.length) {
+                            return const Card(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailProductPage(data: products[index]),
+                              ));
+                            },
+                            child: CardWidget(
+                                data: products[index], onClick: () {}),
+                          );
+                        },
+                        itemCount:
+                            isNext ? products.length + 1 : products.length,
+                      );
+                    },
+                    loading: () {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
-                    if (state.status == Status.loaded) {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      product = state.products!;
-                      return listCard();
-                    }
-                    if (product.isEmpty) {
-                      return const Center(child: Text('no data'));
-                    } else {
-                      return listCard();
-                    }
-                  },
-                ),
+                    },
+                    error: (message) {
+                      return Center(
+                        child: Text(message),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),
@@ -159,9 +231,7 @@ class _HomePageState extends State<HomePage> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('${state.productResponseModel.id}')));
                         Navigator.pop(context);
-                        context
-                            .read<GetProductPaginationBloc>()
-                            .add(GetProductPaginationStarted());
+                        context.read<ProductsPaginationCubit>().getProduct();
                       }
                     },
                     child: BlocBuilder<CreateProductBloc, CreateProductState>(
@@ -197,112 +267,111 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListView listCard() {
-    
-    return ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        controller: controller,
-        itemCount: product.length,
-        itemBuilder: ((context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>  DetailProductPage(data: product[index]),
-              ));
-            },
-            child: CardWidget(
-              data: product[index],
-              onClick: () {
-                context
-                    .read<GetOneProductBloc>()
-                    .add(DoGetOneProductEvent(id: product[index].id!));
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Edit Product'),
-                      content:
-                          BlocBuilder<GetOneProductBloc, GetOneProductState>(
-                        builder: (context, state) {
-                          if (state is GetOneProductLoaded) {
-                            updateTitleController.text = state.product.title!;
-                            updatePriceController.text =
-                                state.product.price.toString();
-                            updateDescriptionController.text =
-                                state.product.description!;
-                            return DialogWidget(
-                                titleController: updateTitleController,
-                                priceController: updatePriceController,
-                                descriptionController:
-                                    updateDescriptionController);
-                          } else {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        },
-                      ),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        BlocListener<EditProductBloc, EditProductState>(
-                          listener: (context, state) {
-                            if (state is EditProductLoaded) {
-                              updateTitleController.clear();
-                              updatePriceController.clear();
-                              updateDescriptionController.clear();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('xxx')));
-                              Navigator.pop(context);
-                              // context
-                              //     .read<GetAllProductBloc>()
-                              //     .add(DoGetAllProductEvent());
-                              context
-                                  .read<GetProductPaginationBloc>()
-                                  .add(GetProductPaginationStarted());
-                            }
-                          },
-                          child: BlocBuilder<EditProductBloc, EditProductState>(
-                            builder: (context, state) {
-                              if (state is EditProductLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return ElevatedButton(
-                                onPressed: () {
-                                  final productModel = ProductModelUpdate(
-                                    title: updateTitleController.text,
-                                    price:
-                                        int.parse(updatePriceController.text),
-                                    description:
-                                        updateDescriptionController.text,
-                                  );
+  // ListView listCard() {
+  //   return ListView.builder(
+  //       padding: const EdgeInsets.symmetric(horizontal: 16),
+  //       controller: controller,
+  //       itemCount: product.length,
+  //       itemBuilder: ((context, index) {
+  //         return GestureDetector(
+  //           onTap: () {
+  //             Navigator.of(context).push(MaterialPageRoute(
+  //               builder: (context) => DetailProductPage(data: product[index]),
+  //             ));
+  //           },
+  //           child: CardWidget(
+  //             data: product[index],
+  //             onClick: () {
+  //               context
+  //                   .read<GetOneProductBloc>()
+  //                   .add(DoGetOneProductEvent(id: product[index].id));
+  //               showDialog(
+  //                 context: context,
+  //                 builder: (context) {
+  //                   return AlertDialog(
+  //                     title: const Text('Edit Product'),
+  //                     content:
+  //                         BlocBuilder<GetOneProductBloc, GetOneProductState>(
+  //                       builder: (context, state) {
+  //                         if (state is GetOneProductLoaded) {
+  //                           updateTitleController.text = state.product.title;
+  //                           updatePriceController.text =
+  //                               state.product.price.toString();
+  //                           updateDescriptionController.text =
+  //                               state.product.description;
+  //                           return DialogWidget(
+  //                               titleController: updateTitleController,
+  //                               priceController: updatePriceController,
+  //                               descriptionController:
+  //                                   updateDescriptionController);
+  //                         } else {
+  //                           return const Center(
+  //                             child: CircularProgressIndicator(),
+  //                           );
+  //                         }
+  //                       },
+  //                     ),
+  //                     actions: [
+  //                       ElevatedButton(
+  //                         onPressed: () {
+  //                           Navigator.pop(context);
+  //                         },
+  //                         child: const Text('Cancel'),
+  //                       ),
+  //                       const SizedBox(
+  //                         width: 4,
+  //                       ),
+  //                       BlocListener<EditProductBloc, EditProductState>(
+  //                         listener: (context, state) {
+  //                           if (state is EditProductLoaded) {
+  //                             updateTitleController.clear();
+  //                             updatePriceController.clear();
+  //                             updateDescriptionController.clear();
+  //                             ScaffoldMessenger.of(context).showSnackBar(
+  //                                 const SnackBar(content: Text('xxx')));
+  //                             Navigator.pop(context);
+  //                             // context
+  //                             //     .read<GetAllProductBloc>()
+  //                             //     .add(DoGetAllProductEvent());
+  //                             context
+  //                                 .read<GetProductPaginationBloc>()
+  //                                 .add(GetProductPaginationStarted());
+  //                           }
+  //                         },
+  //                         child: BlocBuilder<EditProductBloc, EditProductState>(
+  //                           builder: (context, state) {
+  //                             if (state is EditProductLoading) {
+  //                               return const Center(
+  //                                 child: CircularProgressIndicator(),
+  //                               );
+  //                             }
+  //                             return ElevatedButton(
+  //                               onPressed: () {
+  //                                 final productModel = ProductModelUpdate(
+  //                                   title: updateTitleController.text,
+  //                                   price:
+  //                                       int.parse(updatePriceController.text),
+  //                                   description:
+  //                                       updateDescriptionController.text,
+  //                                 );
 
-                                  context.read<EditProductBloc>().add(
-                                      DoUpdateProductEvent(
-                                          productModel: productModel,
-                                          id: product[index].id!));
-                                },
-                                child: const Text('Save'),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        }));
-  }
+  //                                 context.read<EditProductBloc>().add(
+  //                                     DoUpdateProductEvent(
+  //                                         productModel: productModel,
+  //                                         id: product[index].id!));
+  //                               },
+  //                               child: const Text('Save'),
+  //                             );
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //           ),
+  //         );
+  //       }));
+  // }
 }

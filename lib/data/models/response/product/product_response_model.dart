@@ -1,104 +1,43 @@
 // To parse this JSON data, do
 //
-//     final productResponseModel = productResponseModelFromMap(jsonString);
+//     final productResponseModel = productResponseModelFromJson(jsonString);
 
+import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
-class ProductResponseModel {
-  String? title;
-  int? price;
-  String? description;
-  List<String>? images;
-  Category? category;
-  int? id;
-  DateTime? creationAt;
-  DateTime? updatedAt;
+part 'product_response_model.freezed.dart';
+part 'product_response_model.g.dart';
 
-  ProductResponseModel({
-    this.title,
-    this.price,
-    this.description,
-    this.images,
-    this.category,
-    this.id,
-    this.creationAt,
-    this.updatedAt,
-  });
+ProductResponseModel productResponseModelFromJson(String str) => ProductResponseModel.fromJson(json.decode(str));
 
-  factory ProductResponseModel.fromJson(String str) =>
-      ProductResponseModel.fromMap(json.decode(str));
+String productResponseModelToJson(ProductResponseModel data) => json.encode(data.toJson());
 
-  String toJson() => json.encode(toMap());
+@freezed
+class ProductResponseModel with _$ProductResponseModel {
+    const factory ProductResponseModel({
+        required int id,
+        required String title,
+        required int price,
+        required String description,
+        required List<String> images,
+        required DateTime creationAt,
+        required DateTime updatedAt,
+        required Category category,
+    }) = _ProductResponseModel;
 
-  factory ProductResponseModel.fromMap(Map<String, dynamic> json) =>
-      ProductResponseModel(
-        title: json["title"],
-        price: json["price"],
-        description: json["description"],
-        images: json["images"] == null
-            ? []
-            : List<String>.from(json["images"]!.map((x) => x)),
-        category: json["category"] == null
-            ? null
-            : Category.fromMap(json["category"]),
-        id: json["id"],
-        creationAt: json["creationAt"] == null
-            ? null
-            : DateTime.parse(json["creationAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "title": title,
-        "price": price,
-        "description": description,
-        "images":
-            images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
-        "category": category?.toMap(),
-        "id": id,
-        "creationAt": creationAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-      };
+    factory ProductResponseModel.fromJson(Map<String, dynamic> json) => _$ProductResponseModelFromJson(json);
 }
 
-class Category {
-  int? id;
-  String? name;
-  String? image;
-  DateTime? creationAt;
-  DateTime? updatedAt;
+@freezed
+class Category with _$Category {
+    const factory Category({
+        required int id,
+        required String name,
+        required String image,
+        required DateTime creationAt,
+        required DateTime updatedAt,
+    }) = _Category;
 
-  Category({
-    this.id,
-    this.name,
-    this.image,
-    this.creationAt,
-    this.updatedAt,
-  });
-
-  factory Category.fromJson(String str) => Category.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Category.fromMap(Map<String, dynamic> json) => Category(
-        id: json["id"],
-        name: json["name"],
-        image: json["image"],
-        creationAt: json["creationAt"] == null
-            ? null
-            : DateTime.parse(json["creationAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
-        "image": image,
-        "creationAt": creationAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-      };
+    factory Category.fromJson(Map<String, dynamic> json) => _$CategoryFromJson(json);
 }

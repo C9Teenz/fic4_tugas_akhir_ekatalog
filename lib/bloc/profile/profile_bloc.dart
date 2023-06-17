@@ -10,10 +10,7 @@ part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  
-  ProfileBloc(
- 
-  ) : super(ProfileInitial()) {
+  ProfileBloc() : super(ProfileInitial()) {
     on<GetProfileEvent>((event, emit) async {
       // try {
       //   emit(ProfileLoading());
@@ -23,12 +20,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       //   emit(ProfileError(message: 'network problem: ${e.toString()}'));
       // }
       emit(ProfileLoading());
-      try {
-        final result = await AuthDatasource.getProfile();
-        emit(ProfileLoaded(profile: result));
-      } catch (e) {
-        emit(ProfileError(message: 'network problem: ${e.toString()}'));
-      }
+
+      final result = await AuthDatasource.getProfile();
+      result.fold((l) {
+        emit(ProfileError(message: l));
+      }, (r) {
+        emit(ProfileLoaded(profile: r));
+      });
     });
   }
 }

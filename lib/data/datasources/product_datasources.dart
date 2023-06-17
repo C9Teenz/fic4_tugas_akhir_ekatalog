@@ -22,7 +22,7 @@ class ProductDatasources {
       body: model.toJson(),
     );
     if (response.statusCode == 201) {
-      return right(ProductResponseModel.fromJson(response.body));
+      return right(ProductResponseModel.fromJson(jsonDecode(response.body)));
     } else {
       return left('Failed to create product.');
     }
@@ -52,7 +52,7 @@ class ProductDatasources {
         data: model.toMap());
 
     if (response.statusCode == 200) {
-      return right(ProductResponseModel.fromMap(response.data));
+      return right(ProductResponseModel.fromJson(response.data));
     } else {
       return left('Failed to update product.');
     }
@@ -63,7 +63,7 @@ class ProductDatasources {
       Uri.parse('https://api.escuelajs.co/api/v1/products/$id'),
     );
     if (response.statusCode == 200) {
-      return right(ProductResponseModel.fromJson(response.body));
+      return right(ProductResponseModel.fromJson(json.decode(response.body)));
     } else {
       return left('Failed to get product.');
     }
@@ -75,7 +75,7 @@ class ProductDatasources {
     );
     if (response.statusCode == 200) {
       final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-          .map((x) => ProductResponseModel.fromMap(x))).toList();
+          .map((x) => ProductResponseModel.fromJson(x))).toList();
       return right(result);
     } else {
       return left('Failed to get product.');
@@ -90,7 +90,7 @@ class ProductDatasources {
         headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-          .map((x) => ProductResponseModel.fromMap(x))).toList();
+          .map((x) => ProductResponseModel.fromJson(x))).toList();
       return right(result);
     } else {
       return left('Failed to get product.');
@@ -105,12 +105,22 @@ class ProductDatasources {
         headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final result = List<ProductResponseModel>.from(jsonDecode(response.body)
-          .map((x) => ProductResponseModel.fromMap(x))).toList();
+          .map((x) => ProductResponseModel.fromJson(x))).toList();
       return right(result);
     } else {
       return left('Failed to get product.');
     }
-
- 
   }
+   Future<Either<String, List<ProductResponseModel>>> getPaginationProduct(
+      {required int offset, required int limit}) async {
+    final response = await http.get(Uri.parse(
+        'https://api.escuelajs.co/api/v1/products/?offset=$offset&limit=$limit'));
+    if (response.statusCode == 200) {
+      return Right(List<ProductResponseModel>.from(jsonDecode(response.body)
+          .map((x) => ProductResponseModel.fromJson(x))));
+    } else {
+      return const Left('get product error');
+    }
+  }
+
 }

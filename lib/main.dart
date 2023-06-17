@@ -1,16 +1,15 @@
-import 'package:fic4_flutter_auth_bloc/bloc/product/get_product_pagination/get_product_pagination_bloc.dart';
-import 'package:fic4_flutter_auth_bloc/cubit/login/login_cubit.dart';
-import 'package:fic4_flutter_auth_bloc/cubit/register/register_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/login/login_bloc.dart';
 import 'bloc/product/create_product/create_product_bloc.dart';
 import 'bloc/product/edit_product/edit_product_bloc.dart';
 import 'bloc/product/get_all_product/get_all_product_bloc.dart';
 import 'bloc/product/get_one_product/get_one_product_bloc.dart';
-import 'bloc/profile/profile_bloc.dart';
-import 'bloc/register/register_bloc.dart';
+import 'bloc/product/get_product_pagination/get_product_pagination_bloc.dart';
+import 'cubit/login/login_cubit.dart';
+import 'cubit/product/products_pagination/products_pagination_cubit.dart';
+import 'cubit/profile/profile_cubit.dart';
+import 'cubit/register/register_cubit.dart';
 import 'data/datasources/auth_datasources.dart';
 import 'data/datasources/product_datasources.dart';
 import 'presentation/pages/login_page.dart';
@@ -36,33 +35,39 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        //bloc Register
+        //bloc
         // BlocProvider(
         //   create: (context) => RegisterBloc(AuthDatasource()),
         // ),
-
-        //cubit register
-        BlocProvider(
-          create: (context) => RegisterCubit(AuthDatasource()),
-        ),
-
-        //bloc login
         // BlocProvider(
         //   create: (context) => LoginBloc(AuthDatasource()),
         // ),
+        //   BlocProvider(
+        //   create: (context) => ProfileBloc(),
+        // ),
+        // BlocProvider(
+        //   create: (context) => GetAllProductBloc(ProductDatasources()),
+        // ),
+        // BlocProvider(
+        //   create: (context) => GetProductPaginationBloc(ProductDatasources())
+        //     ..add(GetProductPaginationStarted()),
+        // ),
 
-        //cubit login
+        //cubit
+        BlocProvider(
+          create: (context) => RegisterCubit(AuthDatasource()),
+        ),
         BlocProvider(
           create: (context) => LoginCubit(AuthDatasource()),
         ),
         BlocProvider(
-          create: (context) => ProfileBloc(),
+          create: (context) => ProfileCubit(),
+        ),
+          BlocProvider(
+          create: (context) => ProductsPaginationCubit(ProductDatasources()),
         ),
         BlocProvider(
           create: (context) => CreateProductBloc(ProductDatasources()),
-        ),
-        BlocProvider(
-          create: (context) => GetAllProductBloc(ProductDatasources()),
         ),
         BlocProvider(
           create: (context) => EditProductBloc(ProductDatasources()),
@@ -70,10 +75,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (context) => GetOneProductBloc(ProductDatasources()),
         ),
-        BlocProvider(
-          create: (context) => GetProductPaginationBloc(ProductDatasources())
-            ..add(GetProductPaginationStarted()),
-        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -87,4 +88,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
