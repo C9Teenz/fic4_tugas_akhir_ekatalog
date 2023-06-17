@@ -1,13 +1,10 @@
-import 'package:fic4_flutter_auth_bloc/cubit/product/cubit/add_product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/product/create_product/create_product_bloc.dart';
 import 'bloc/product/edit_product/edit_product_bloc.dart';
-import 'bloc/product/get_all_product/get_all_product_bloc.dart';
 import 'bloc/product/get_one_product/get_one_product_bloc.dart';
-import 'bloc/product/get_product_pagination/get_product_pagination_bloc.dart';
 import 'cubit/login/login_cubit.dart';
+import 'cubit/product/cubit/add_product_cubit.dart';
 import 'cubit/product/products_pagination/products_pagination_cubit.dart';
 import 'cubit/profile/profile_cubit.dart';
 import 'cubit/register/register_cubit.dart';
