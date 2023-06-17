@@ -1,12 +1,15 @@
 import 'dart:convert';
 
+import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/request/product_model.dart';
 import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 import '../models/request/product_model_update.dart';
+import '../models/response/upload image/upload_response_model.dart';
 
 class ProductDatasources {
   final dio = Dio();
@@ -120,6 +123,30 @@ class ProductDatasources {
           .map((x) => ProductResponseModel.fromJson(x))));
     } else {
       return const Left('get product error');
+    }
+  }
+   Future<Either<String, UploadResponseModel>> uploadImage(XFile image) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('https://api.escuelajs.co/api/v1/files/upload'),
+    );
+
+    final bytes = await image.readAsBytes();
+
+    final multiPartFile =
+        http.MultipartFile.fromBytes('file', bytes, filename: image.name);
+
+    request.files.add(multiPartFile);
+
+    http.StreamedResponse response = await request.send();
+
+    final Uint8List responseList = await response.stream.toBytes();
+    final String responseData = String.fromCharCodes(responseList);
+
+    if (response.statusCode == 201) {
+      return Right(UploadResponseModel.fromJson(jsonDecode(responseData)));
+    } else {
+      return const Left('error upload image');
     }
   }
 

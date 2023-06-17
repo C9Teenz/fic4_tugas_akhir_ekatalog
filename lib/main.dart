@@ -1,3 +1,4 @@
+import 'package:fic4_flutter_auth_bloc/cubit/product/cubit/add_product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,6 +53,9 @@ class _MyAppState extends State<MyApp> {
         //   create: (context) => GetProductPaginationBloc(ProductDatasources())
         //     ..add(GetProductPaginationStarted()),
         // ),
+        //   BlocProvider(
+        //   create: (context) => CreateProductBloc(ProductDatasources()),
+        // ),
 
         //cubit
         BlocProvider(
@@ -67,7 +71,7 @@ class _MyAppState extends State<MyApp> {
           create: (context) => ProductsPaginationCubit(ProductDatasources()),
         ),
         BlocProvider(
-          create: (context) => CreateProductBloc(ProductDatasources()),
+          create: (context) => AddProductCubit(ProductDatasources()),
         ),
         BlocProvider(
           create: (context) => EditProductBloc(ProductDatasources()),

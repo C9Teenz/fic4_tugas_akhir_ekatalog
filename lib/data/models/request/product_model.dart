@@ -21,7 +21,7 @@ class ProductModel {
     required this.price,
     required this.description,
     this.categoryId = 1,
-    this.images = const ['https://placeimg.com/640/480/any'],
+    this.images =const ['https://placeimg.com/640/480/any'],
   });
 
   Map<String, dynamic> toMap() {
@@ -30,7 +30,7 @@ class ProductModel {
       'price': price,
       'description': description,
       'categoryId': categoryId,
-      'images': images,
+      'images': List<dynamic>.from(images.map((x) => x)),
     };
   }
 
@@ -48,4 +48,20 @@ class ProductModel {
 
   factory ProductModel.fromJson(String source) =>
       ProductModel.fromMap(json.decode(source));
+
+  ProductModel copyWith({
+    String? title,
+    int? price,
+    String? description,
+    int? categoryId,
+    List<String>? images,
+  }) {
+    return ProductModel(
+      title: title ?? this.title,
+      price: price ?? this.price,
+      description: description ?? this.description,
+      categoryId: categoryId ?? this.categoryId,
+      images: images ?? this.images,
+    );
+  }
 }
