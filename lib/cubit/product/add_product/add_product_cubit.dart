@@ -19,7 +19,7 @@ class AddProductCubit extends Cubit<AddProductState> {
   ) : super(const _Initial());
     void addProduct(ProductModel model, XFile image) async {
     emit(const _Loading());
-    final uploadResult = await data.uploadImage(image);
+    final uploadResult = await ProductDatasources.uploadImage(image);
     uploadResult.fold(
       (l) => emit(_Error(l)),
       (dataUpload) async {

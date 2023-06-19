@@ -1,9 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math' as math;
-
-import 'package:flutter/material.dart';
-
 import 'package:fic4_flutter_auth_bloc/data/models/response/product/product_response_model.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DetailProductPage extends StatelessWidget {
@@ -23,13 +20,13 @@ class DetailProductPage extends StatelessWidget {
         height: height * 0.4,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: data.images!.length,
+          itemCount: data.images.length,
           itemBuilder: (context, index) {
             return Container(
               width: width - 16,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage(data.images![index]),
+                      image: NetworkImage(data.images[index]),
                       fit: BoxFit.cover)),
             );
           },
@@ -61,7 +58,7 @@ class DetailProductPage extends StatelessWidget {
               height: 5,
             ),
             Text(
-              data.title!,
+              data.title,
               style: const TextStyle(
                   fontSize: 16,
                   color: Colors.grey,
@@ -94,7 +91,7 @@ class DetailProductPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    data.category!.name!,
+                    data.category.name,
                     style: const TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -106,7 +103,7 @@ class DetailProductPage extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         image: DecorationImage(
-                            image: NetworkImage(data.category!.image!),
+                            image: NetworkImage(data.category.image),
                             fit: BoxFit.cover)),
                   )
                 ],
@@ -134,7 +131,7 @@ class DetailProductPage extends StatelessWidget {
                   color: Colors.black),
             ),
             Text(
-              data.description!,
+              data.description,
               style: const TextStyle(
                   fontSize: 16,
                   color: Colors.grey,

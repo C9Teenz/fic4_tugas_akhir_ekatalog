@@ -9,6 +9,7 @@ import '../widgets/card_widget.dart';
 import 'add_product_page.dart';
 import 'detail_product_page.dart';
 import 'login_page.dart';
+import 'update_product_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -168,7 +169,12 @@ class _HomePageState extends State<HomePage> {
                               ));
                             },
                             child: CardWidget(
-                                data: products[index], onClick: () {}),
+                                data: products[index], onClick: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    UpdateProductPage(data: products[index]),
+                              ));
+                                }),
                           );
                         },
                         itemCount:

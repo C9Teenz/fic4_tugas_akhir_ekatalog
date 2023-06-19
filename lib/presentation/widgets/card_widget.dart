@@ -31,7 +31,7 @@ class CardWidget extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(data.images![0]),
+                image: NetworkImage(data.images[0]),
               ),
               borderRadius: BorderRadius.circular(18),
             ),
@@ -41,7 +41,7 @@ class CardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.title!,
+                  data.title,
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w500),
                 ),
@@ -49,7 +49,7 @@ class CardWidget extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  '${data.price!}',
+                  '${data.price}',
                   style: const TextStyle(color: Colors.black),
                 ),
               ],

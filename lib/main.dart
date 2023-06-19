@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'bloc/product/edit_product/edit_product_bloc.dart';
-import 'bloc/product/get_one_product/get_one_product_bloc.dart';
 import 'cubit/login/login_cubit.dart';
-import 'cubit/product/cubit/add_product_cubit.dart';
+import 'cubit/product/add_product/add_product_cubit.dart';
 import 'cubit/product/products_pagination/products_pagination_cubit.dart';
+import 'cubit/product/update_product/update_product_cubit.dart';
 import 'cubit/profile/profile_cubit.dart';
 import 'cubit/register/register_cubit.dart';
 import 'data/datasources/auth_datasources.dart';
@@ -53,6 +52,12 @@ class _MyAppState extends State<MyApp> {
         //   BlocProvider(
         //   create: (context) => CreateProductBloc(ProductDatasources()),
         // ),
+        //   BlocProvider(
+        //   create: (context) => EditProductBloc(ProductDatasources()),
+        // ),
+        // BlocProvider(
+        //   create: (context) => GetOneProductBloc(ProductDatasources()),
+        // ),
 
         //cubit
         BlocProvider(
@@ -71,11 +76,10 @@ class _MyAppState extends State<MyApp> {
           create: (context) => AddProductCubit(ProductDatasources()),
         ),
         BlocProvider(
-          create: (context) => EditProductBloc(ProductDatasources()),
+          create: (context) => UpdateProductCubit(ProductDatasources()),
         ),
-        BlocProvider(
-          create: (context) => GetOneProductBloc(ProductDatasources()),
-        ),
+    
+      
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

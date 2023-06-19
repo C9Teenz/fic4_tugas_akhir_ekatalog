@@ -125,7 +125,7 @@ class ProductDatasources {
       return const Left('get product error');
     }
   }
-   Future<Either<String, UploadResponseModel>> uploadImage(XFile image) async {
+   static Future<Either<String, UploadResponseModel>> uploadImage(XFile image) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('https://api.escuelajs.co/api/v1/files/upload'),
@@ -147,6 +147,18 @@ class ProductDatasources {
       return Right(UploadResponseModel.fromJson(jsonDecode(responseData)));
     } else {
       return const Left('error upload image');
+    }
+  }
+   Future<Either<String, ProductResponseModel>> updateProductCubit(
+      ProductModel model, int id) async {
+    final response = await dio.put(
+        'https://api.escuelajs.co/api/v1/products/$id',
+        data: model.toMap());
+
+    if (response.statusCode == 200) {
+      return right(ProductResponseModel.fromJson(response.data));
+    } else {
+      return left('Failed to update product.');
     }
   }
 
